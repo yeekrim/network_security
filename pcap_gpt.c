@@ -17,7 +17,8 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
         
             printf("====================================");
 
-            struct pseudo_tcp *message = tcp->payload;
+            struct pseudo_tcp *message;
+            message->payload;
             printf("Message : %.100s", message);
         }
     }
