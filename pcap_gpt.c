@@ -16,14 +16,11 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
             printf("TCP Header : src port - %u / dst port - %u\n", tcp->tcp_sport, tcp->tcp_dport);
         }
 
-        printf("====================================")
+        printf("====================================");
 
         struct pseudo_tcp *message = tcp->payload;
         printf("Message : %.100s", message);
-
-
-
-
+    }
 }
 
 int main() {
