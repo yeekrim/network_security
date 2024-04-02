@@ -9,7 +9,9 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
 
     if (ntohs(eth->ether_type)==0x0800) {
         struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader));
-        printf("IP Header : src ip - %s / dst ip - %s\n", ip->iph_sourceip, ip->iph_destip);
+        printf("IP Header : src ip - %d.%d.%d.%d / dst ip - %d.%d.%d.%d\n", 
+               ip->iph_sourceip[0], ip->iph_sourceip[1], ip->iph_sourceip[2], ip->iph_sourceip[3], 
+               ip->iph_destip[0], ip->iph_destip[1], ip->iph_destip[2], ip->iph_destip[3]);
 
         if (ip->iph_protocol == IPPROTO_TCP) {
             struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
@@ -17,9 +19,10 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
         
             printf("====================================");
 
-            struct pseudo_tcp *message;
-            message->payload;
-            printf("Message : %.100s", message);
+            struct pseudo_tcp message;
+            // message 초기화
+
+            printf("Message : %.100s", message.payload);
         }
     }
 }
