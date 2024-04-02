@@ -12,11 +12,11 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
     if (ntohs(eth->ether_type)==0x0800) {
         struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader));
         printf("IP Header : src ip - %c / dst ip - %c", ip->iph_sourceip,ip->iph_destip);
-    }
 
-    if (ip->iph_protocol == IPPROTO_TCP) {
-        struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
-        printf("TCP Header : src port - %u / dst port - %u", tcp->tcp_sport,tcp->tcp_dport);
+        if (ip->iph_protocol == IPPROTO_TCP) {
+            struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
+            printf("TCP Header : src port - %u / dst port - %u", tcp->tcp_sport,tcp->tcp_dport);
+        }
     }
     //printf("Message (Up to 100) : \n");
     //printf("%.100s\n", pseudo_tcp.payload);
