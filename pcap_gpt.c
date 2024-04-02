@@ -14,12 +14,12 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
         if (ip->iph_protocol == IPPROTO_TCP) {
             struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
             printf("TCP Header : src port - %u / dst port - %u\n", tcp->tcp_sport, tcp->tcp_dport);
+        
+            printf("====================================");
+
+            struct pseudo_tcp *message = tcp->payload;
+            printf("Message : %.100s", message);
         }
-
-        printf("====================================");
-
-        struct pseudo_tcp *message = tcp->payload;
-        printf("Message : %.100s", message);
     }
 }
 
