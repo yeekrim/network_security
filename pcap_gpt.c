@@ -10,7 +10,7 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
 
     if (ntohs(eth->ether_type)==0x0800) {
         struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader));
-        printf("IP Header : src ip - %u / dst ip - %u\n", inet_ntoa(ip->iph_sourceip), inet_ntoa(ip->iph_destip));
+        printf("IP Header : src ip - %s / dst ip - %s\n", inet_ntoa(ip->iph_sourceip), inet_ntoa(ip->iph_destip));
 
         if (ip->iph_protocol == IPPROTO_TCP) {
             struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
@@ -19,8 +19,11 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
             int iph_len = (ip->iph_ihl) * 4;
             int tcph_len = TH_OFF(tcp) * 4;
             unsigned char *message = packet + sizeof(struct ethheader) + iph_len + tcph_len;
-            printf("Message : %.100s\n", message);
-
+            if (message != NULL) {
+                for (int i=0; i<100; i++) {
+                printf("%c", message);
+            }
+            }
             printf("====================================\n");
         }
     }
