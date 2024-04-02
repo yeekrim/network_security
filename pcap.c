@@ -7,16 +7,16 @@
 
 void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
     struct ethheader *eth = (struct ethheader *)packet;
-    printf("Ethernet Header : src mac - %s / dst mac - %s", eth->ethheader.ether_dhost,eth->ethheader.ether_dhost);
+    printf("Ethernet Header : src mac - %s / dst mac - %s", eth->ether_dhost,eth->ether_dhost);
 
-    if (ntohs(eth->ethheader.ether_type)==0x0800) {
+    if (ntohs(eth->ether_type)==0x0800) {
         struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader));
-        printf("IP Header : src ip - %s / dst ip - %s", ip->ipheader.iph_sourceip,ip->ipheader.iph_destip);
+        printf("IP Header : src ip - %s / dst ip - %s", ip->iph_sourceip,ip->iph_destip);
     }
 
     if (ip->iph_protocol == IPPROTO_TCP) {
         sturct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
-        printf("TCP Header : src ip - %s / dst ip - %s", tcpheader.iph_sourceip,ipheader.iph_destip);
+        printf("TCP Header : src port - %s / dst port - %s", tcp->tcp_sport,tcp->tcp_dport);
     }
     //printf("Message (Up to 100) : \n");
     //printf("%.100s\n", pseudo_tcp.payload);
