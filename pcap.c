@@ -7,11 +7,11 @@
 
 void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
     struct ethheader *eth = (struct ethheader *)packet;
-    printf("Ethernet Header : src mac - %u / dst mac - %u", eth->ether_dhost,eth->ether_dhost);
+    printf("Ethernet Header : src mac - %hhn / dst mac - %hhn", eth->ether_dhost,eth->ether_dhost);
 
     if (ntohs(eth->ether_type)==0x0800) {
         struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader));
-        printf("IP Header : src ip - %c / dst ip - %c", ip->iph_sourceip,ip->iph_destip);
+        printf("IP Header : src ip - %d / dst ip - %d", ip->iph_sourceip,ip->iph_destip);
 
         if (ip->iph_protocol == IPPROTO_TCP) {
             struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
