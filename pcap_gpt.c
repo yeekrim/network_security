@@ -5,19 +5,25 @@
 
 void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
     struct ethheader *eth = (struct ethheader *)packet;
-    
-    // 디버깅을 위해 각 구조체 멤버가 올바른지 출력해보기
-    printf("Ethernet Header : src mac - %hhn / dst mac - %hhn\n", eth->ether_shost, eth->ether_dhost);
+    printf("Ethernet Header : src mac - %s / dst mac - %s\n", eth->ether_shost, eth->ether_dhost);
 
     if (ntohs(eth->ether_type)==0x0800) {
         struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader));
-        printf("IP Header : src ip - %d / dst ip - %d\n", ip->iph_sourceip, ip->iph_destip);
+        printf("IP Header : src ip - %s / dst ip - %s\n", ip->iph_sourceip, ip->iph_destip);
 
         if (ip->iph_protocol == IPPROTO_TCP) {
             struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
             printf("TCP Header : src port - %u / dst port - %u\n", tcp->tcp_sport, tcp->tcp_dport);
         }
-    }
+
+        printf("====================================")
+
+        struct pseudo_tcp *message = tcp->payload;
+        printf("Message : %.100s", message);
+
+
+
+
 }
 
 int main() {
@@ -28,7 +34,7 @@ int main() {
     bpf_u_int32 net;
 
     // Step 1: Open live pcap session on NIC with name enp0s3
-    handle = pcap_open_live("enp0s3", BUFSIZ, 1, 1000, errbuf); 
+    handle = pcap_open_live("lo", BUFSIZ, 1, 1000, errbuf); 
 
     if (handle == NULL) {
         fprintf(stderr, "Couldn't open device: %s\n", errbuf);

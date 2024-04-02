@@ -3,8 +3,6 @@
 #include <pcap.h>
 #include "myheader.h"
 
-
-
 void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
     struct ethheader *eth = (struct ethheader *)packet;
     printf("Ethernet Header : src mac - %hhn / dst mac - %hhn", eth->ether_dhost,eth->ether_dhost);
@@ -17,6 +15,8 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
             struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
             printf("TCP Header : src port - %u / dst port - %u", tcp->tcp_sport,tcp->tcp_dport);
         }
+    
+    printf("====================================")
     }
     //printf("Message (Up to 100) : \n");
     //printf("%.100s\n", pseudo_tcp.payload);
