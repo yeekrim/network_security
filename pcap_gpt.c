@@ -13,19 +13,19 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
         printf("IP Header : src ip - %s / dst ip - %s\n", inet_ntoa(ip->iph_sourceip), inet_ntoa(ip->iph_destip));
 
         if (ip->iph_protocol == IPPROTO_TCP) {
-            struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
+            struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl * 0x0F)*4);
             printf("TCP Header : src port - %u / dst port - %u\n", ntohs(tcp->tcp_sport), ntohs(tcp->tcp_dport));
 
             int iph_len = (ip->iph_ihl & 0xF) * 4;
             int tcph_len = TH_OFF(tcp) * 4;
             if (ip - iph_len - tcph_len > 0) {
-                unsigned char *message = packet + sizeof(struct ethheader) + iph_len + tcph_len;
+                const unsigned char *message = packet + sizeof(struct ethheader) + iph_len + tcph_len;
                 printf("Message : ");
                 for (int i=0; i<100; i++) {
                     printf("%c", message[i]);
                 }
             }
-            printf("\n");
+            printf("\n==================================\n");
         }
     }
 }

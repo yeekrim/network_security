@@ -1,9 +1,3 @@
-/*
-- Ethernet Header: src mac / dst mac
-- IP Header: src ip / dst ip
-- TCP Header: src port / dst port
-- Message
-*/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -54,24 +48,34 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header,
 int main()
 {
   pcap_t *handle;
-  char errbuf[PCAP_ERRBUF_SIZE];
-  struct bpf_program fp;
-  char filter_exp[] = "tcp";
-  bpf_u_int32 net;
+    char errbuf[PCAP_ERRBUF_SIZE];
+    struct bpf_program fp;
+    char filter_exp[] = "tcp";
+    bpf_u_int32 net;
 
-  // Step 1: Open live pcap session on NIC with name enp0s3
-  handle = pcap_open_live("eth0", BUFSIZ, 1, 1000, errbuf);
+    // Step 1: Open live pcap session on NIC with name enp0s3
+    handle = pcap_open_live("enp0s3", BUFSIZ, 1, 1000, errbuf); 
 
-  // Step 2: Compile filter_exp into BPF psuedo-code
-  pcap_compile(handle, &fp, filter_exp, 0, net);
-  if (pcap_setfilter(handle, &fp) !=0) {
-      pcap_perror(handle, "Error:");
-      exit(EXIT_FAILURE);
-  }
+    if (handle == NULL) {
+        fprintf(stderr, "Couldn't open device: %s\n", errbuf);
+        return EXIT_FAILURE;
+    }
 
-  // Step 3: Capture packets
-  pcap_loop(handle, -1, got_packet, NULL);
+    // Step 2: Compile filter_exp into BPF psuedo-code
+    if (pcap_compile(handle, &fp, filter_exp, 0, net) == -1) {              
+        fprintf(stderr, "Couldn't parse filter %s: %s\n", filter_exp, pcap_geterr(handle));
+        return EXIT_FAILURE;
+    }
 
-  pcap_close(handle);   //Close the handle
-  return 0;
+    // Step 3: Set the filter
+    if (pcap_setfilter(handle, &fp) == -1) {
+        fprintf(stderr, "Couldn't install filter %s: %s\n", filter_exp, pcap_geterr(handle));
+        return EXIT_FAILURE;
+    }
+
+    // Step 4: Capture packets
+    pcap_loop(handle, -1, Info_Packet, NULL);                    
+
+    pcap_close(handle);   // Close the handle
+    return 0;
 }
