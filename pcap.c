@@ -5,21 +5,30 @@
 
 void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet) {
     struct ethheader *eth = (struct ethheader *)packet;
-    printf("Ethernet Header : src mac - %hhn / dst mac - %hhn", eth->ether_dhost,eth->ether_dhost);
+    printf("Ethernet Header : src mac - %02x:%02x:%02x:%02x:%02x:%02x / dst mac - %02x:%02x:%02x:%02x:%02x:%02x\n", eth->ether_shost[0], eth->ether_shost[1], eth->ether_shost[2], eth->ether_shost[3], eth->ether_shost[4], eth->ether_shost[5], eth->ether_dhost[0], eth->ether_dhost[1], eth->ether_dhost[2], eth->ether_dhost[3], eth->ether_dhost[4], eth->ether_dhost[5]);
 
     if (ntohs(eth->ether_type)==0x0800) {
         struct ipheader *ip = (struct ipheader *)(packet + sizeof(struct ethheader));
-        printf("IP Header : src ip - %d / dst ip - %d", ip->iph_sourceip,ip->iph_destip);
+        printf("IP Header : src ip - %s / dst ip - %s\n", ntohs(ip->iph_sourceip),ntohs(ip->iph_destip));
 
         if (ip->iph_protocol == IPPROTO_TCP) {
-            struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl)*4);
-            printf("TCP Header : src port - %u / dst port - %u", tcp->tcp_sport,tcp->tcp_dport);
+            struct tcpheader *tcp = (struct tcpheader *)((unsigned char *)ip + (ip->iph_ihl & 0xF)*4);
+            printf("TCP Header : src port - %u / dst port - %u\n", ntohs(tcp->tcp_sport),ntohs(tcp->tcp_dport));
+
+            int iph_len = (ip->iph_ihl & 0xF) * 4;
+            int tcph_len = TH_OFF(tcp) * 4;
+            int data_len = ntohs(ip->iph_len) - iph_len - tcph_len;
+            if (data_len > 0) {
+                const unsigned char *message = packet + sizeof(struct ethheader) + iph_len + tcph_len;
+                printf("Message : ");
+                for (int i=0; i<data_len; i++) {
+                    printf("%c", message[i]);
+                }
+            }
         }
     
-    printf("====================================")
+    printf("\n====================================\n");
     }
-    //printf("Message (Up to 100) : \n");
-    //printf("%.100s\n", pseudo_tcp.payload);
 } 
 
 int main() {
