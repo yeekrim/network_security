@@ -22,7 +22,7 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
             if (data_len > 0) {
                 const unsigned char *message = packet + sizeof(struct ethheader) + iph_len + tcph_len;
                 printf("Message : ");
-                for (int i=0; i<100; i++) {
+                for (int i=0; i<data_len; i++) {
                     printf("%c", message[i]);
                 }
             }
