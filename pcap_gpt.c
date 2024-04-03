@@ -19,12 +19,11 @@ void Info_Packet(u_char *args, const struct pcap_pkthdr *header, const u_char *p
             int iph_len = (ip->iph_ihl & 0xF) * 4;
             int tcph_len = TH_OFF(tcp) * 4;
             if (ip - iph_len - tcph_len > 0) {
-                message = (unsigned char *)(packet + sizeof(struct ethheader) + iph_len + tcph_len);
+                unsigned char *message = packet + sizeof(struct ethheader) + iph_len + tcph_len;
                 printf("Message : ");
                 for (int i=0; i<100; i++) {
                     printf("%c", message[i]);
                 }
-            }
             }
             printf("\n");
         }
